@@ -13,6 +13,9 @@ const fs = require('fs');
 //URL consulta localidades
 const url = 'https://www.correoargentino.com.ar/sites/all/modules/custom/ca_forms/api/wsFacade.php';
 
+//archivo de salida
+const filename = 'localidades.csv';
+
 //segun ISO 3166-2:AR
 const provincias = {
     A: 'Salta',
@@ -87,6 +90,7 @@ const mapLocalidad = (localidad, codigoProvincia) => {
     };
 }
 
+//devuelve lista de localidades
 const getLocalidades = async (url) => {
     //obtengo las localidades de cada provincia
     var localidades = [];
@@ -106,6 +110,7 @@ const getLocalidades = async (url) => {
     return localidades;
 }
 
+//guarda lista de localidades con csv
 const saveAsCsv = (localidades, filename) => {
     return new Promise((resolve, reject) => {
         converter.json2csv(localidades, (error, csv) => {
@@ -131,18 +136,17 @@ const saveAsCsv = (localidades, filename) => {
 /*****************************************************************************/
 /* PROGRAMA                                                                  */
 /*****************************************************************************/
-(async (url) => {
+(async (url, filename) => {
     try {
         //obtengo las localidades
         const localidades = await getLocalidades(url);
 
         //guardo como csv
         console.log('Generando archivo...');
-        const filename = 'localidades.csv';
         await saveAsCsv(localidades, filename);
         console.log(`Se genero el archivo ${filename}`);
     } catch(e) {
         console.log('Error!', e);
     }
 
-})(url);
+})(url, filename);
